@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Has Florian died yet?</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: grid;
+      place-items: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-align: center;
+    }
+    h1 { font-size: clamp(28px, 5vw, 56px); margin: 0 16px 24px; }
+    #answer { font-size: clamp(80px, 12vw, 140px); font-weight: 800; }
+    .tiny { margin-top: 18px; opacity: 0.65; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>has florian died yet?</h1>
+    <div id="answer">…</div>
+    <div class="tiny" id="meta"></div>
+  </main>
+
+  <script>
+    async function run() {
+      const answer = document.getElementById("answer");
+      const meta = document.getElementById("meta");
+
+      try {
+        const res = await fetch("./status.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("status.json missing");
+        const data = await res.json();
+
+        answer.textContent = data.isLivingLegend ? "yes" : "no";
+        meta.textContent = data.updatedAt
+          ? `Last checked: ${data.updatedAt}`
+          : "";
+      } catch (e) {
+        answer.textContent = "nope";
+        meta.textContent = "Data not loaded yet. (Run the updater once in GitHub Actions.)";
+      }
+    }
+    run();
+  </script>
+</body>
+</html>
